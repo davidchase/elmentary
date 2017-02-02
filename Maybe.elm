@@ -87,7 +87,7 @@ concat m m1 =
 
 mapMaybe : (a -> Maybe b) -> List a -> List b
 mapMaybe f xs =
-    List.filterMap f xs
+    catMaybes <| List.map f xs
 
 
 maybe : a -> (b -> a) -> Maybe b -> a
