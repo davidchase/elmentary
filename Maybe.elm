@@ -1,3 +1,19 @@
+module Elmentary.Maybe exposing
+  ( reduce
+  , fmap
+  , chain
+  , ap
+  , filter
+  , isJust
+  , catMaybes
+  , join
+  , lift2
+  , concat
+  , mapMaybe
+  , maybe,
+  , empty
+  )
+
 reduce : (a -> b -> a) -> a -> Maybe b -> a
 reduce f seed maybe =
     case maybe of
