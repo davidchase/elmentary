@@ -115,6 +115,6 @@ maybe val f m =
         Nothing ->
             val
 
-
+empty : Maybe a
 empty =
     Nothing
