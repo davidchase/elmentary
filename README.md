@@ -34,6 +34,8 @@
 
 **empty** : `Maybe a`
 
+**sequence** : `List (Maybe a) -> Maybe (List a)`
+
 ### Inspired by
 
 [sanctuary](http://sanctuary.js.org)
