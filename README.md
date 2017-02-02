@@ -4,8 +4,35 @@
 # elmentary
 > Your one-stop shop for Algebraic Data Types (ADT) in elm 
 
-**Stayed tuned something will appear here shortly**
+## Types
 
+### Maybe Type  
+
+**reduce** : `(a -> b -> a) -> a -> Maybe b -> a`
+
+**filter** : `(a -> Bool) -> Maybe a -> Maybe a`
+
+**isJust** : `Maybe a -> Bool`
+
+**catMaybes** : `List (Maybe b) -> List b`
+
+**fmap** : `(a -> b) -> Maybe a -> Maybe b`
+
+**chain** : `(a -> Maybe b) -> Maybe a -> Maybe b`
+
+**join** : `Maybe (Maybe a) -> Maybe a`
+
+**ap** : `Maybe (b -> a) -> Maybe b -> Maybe a`
+
+**lift2** : `(b -> c -> a) -> Maybe b -> Maybe c -> Maybe a`
+
+**concat** : `Maybe (List a) -> Maybe (List a) -> Maybe (List a)`
+
+**mapMaybe** : `(a -> Maybe b) -> List a -> List b`
+
+**maybe** : `a -> (b -> a) -> Maybe b -> a`
+
+**empty** : `Maybe a`
 
 ### Inspired by
 
