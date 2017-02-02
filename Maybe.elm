@@ -12,6 +12,7 @@ module Elmentary.Maybe exposing
   , mapMaybe
   , maybe,
   , empty
+  , sequence
   )
 
 reduce : (a -> b -> a) -> a -> Maybe b -> a
@@ -118,3 +119,7 @@ maybe val f m =
 empty : Maybe a
 empty =
     Nothing
+
+sequence : List (Maybe a) -> Maybe (List a)
+sequence =
+    Just << catMaybes
