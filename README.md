@@ -75,3 +75,5 @@
 [sanctuary](http://sanctuary.js.org)
 
 [crocks](https://github.com/evilsoft/crocks)
+
+[folktale](http://folktalejs.org/)
