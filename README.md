@@ -34,6 +34,8 @@
 
 **empty** : `Maybe a`
 
+**traverse** : `(a -> Maybe b) -> List a -> Maybe (List b)`
+
 **sequence** : `List (Maybe a) -> Maybe (List a)`
 
 ### Inspired by
