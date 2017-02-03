@@ -13,6 +13,7 @@ module Elmentary.Either exposing
     , traverse
     , sequence
     , toBoolean
+    , eitherToMaybe
     )
  
 type Either a b
@@ -154,3 +155,12 @@ toBoolean either =
 
         Left b ->
             False
+
+eitherToMaybe : Either c a -> Maybe a
+eitherToMaybe either =
+    case either of
+        Left a ->
+            Nothing
+
+        Right b ->
+            Just b
