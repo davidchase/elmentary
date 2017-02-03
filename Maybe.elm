@@ -12,6 +12,7 @@ module Elmentary.Maybe exposing
   , mapMaybe
   , maybe,
   , empty
+  , traverse
   , sequence
   )
 
@@ -120,6 +121,20 @@ empty : Maybe a
 empty =
     Nothing
 
+traverse : (a -> Maybe b) -> List a -> Maybe (List b)
+traverse f =
+    let
+        cons val maybeList =
+            case f val of
+                Just x ->
+                    fmap (\list -> x :: list) maybeList
+
+                Nothing ->
+                    Nothing
+    in
+        List.foldr cons (Just [])
+
+
 sequence : List (Maybe a) -> Maybe (List a)
 sequence =
-    Just << catMaybes
+    traverse identity
