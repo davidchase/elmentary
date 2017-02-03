@@ -7,7 +7,8 @@
 ## Types
 
 ### Maybe Type  
-
+<details>
+<summary> Maybe API</summary>
 **reduce** : `(a -> b -> a) -> a -> Maybe b -> a`
 
 **filter** : `(a -> Bool) -> Maybe a -> Maybe a`
@@ -37,6 +38,7 @@
 **traverse** : `(a -> Maybe b) -> List a -> Maybe (List b)`
 
 **sequence** : `List (Maybe a) -> Maybe (List a)`
+<details>
 
 ### Either Type
 
