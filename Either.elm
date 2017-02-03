@@ -1,19 +1,25 @@
 module Elmentary.Either exposing 
-    ( partition
+    ( ap
+    , bimap
+    , chain
+    , concat
     , either
+    , eitherToMaybe
+    , fmap
+    , getOrElse
     , isLeft
     , isRight
-    , rights
     , lefts
-    , fmap
-    , chain
-    , ap
     , lift2
-    , concat
-    , traverse
+    , maybeToEither
+    , merge
+    , orElse
+    , partition
+    , rights
     , sequence
+    , swap
     , toBoolean
-    , eitherToMaybe
+    , traverse
     )
  
 type Either a b
@@ -21,10 +27,70 @@ type Either a b
     | Right b
 
 
-partition : List (Either c a) -> ( List c, List a )
+getOrElse : a -> Either a a -> a
+getOrElse val either =
+    case either of
+        Left a ->
+            val
+
+        Right b ->
+            b
+
+
+orElse : (a -> a) -> Either a a -> a
+orElse f either =
+    case either of
+        Left a ->
+            f a
+
+        Right b ->
+            b
+
+
+merge : Either a a -> a
+merge either =
+    case either of
+        Left a ->
+            a
+
+        Right b ->
+            b
+
+
+swap : Either a b -> Either b a
+swap either =
+    case either of
+        Left a ->
+            Right a
+
+        Right b ->
+            Left b
+
+
+eitherToMaybe : Either a b -> Maybe b
+eitherToMaybe either =
+    case either of
+        Left a ->
+            Nothing
+
+        Right b ->
+            Just b
+
+
+maybeToEither : a -> Maybe b -> Either a b
+maybeToEither val maybe =
+    case maybe of
+        Just a ->
+            Right a
+
+        Nothing ->
+            Left val
+
+
+partition : List (Either a b) -> ( List a, List b )
 partition =
     let
-        cons either tupleList =
+        extract either tupleList =
             case either of
                 Left a ->
                     Tuple.mapFirst (\xs -> a :: xs) tupleList
@@ -32,20 +98,30 @@ partition =
                 Right b ->
                     Tuple.mapSecond (\xs -> b :: xs) tupleList
     in
-        List.foldr cons ( [], [] )
+        List.foldr extract ( [], [] )
 
 
-either : (c -> b) -> (a -> b) -> Either c a -> b
+either : (a -> c) -> (b -> c) -> Either a b -> c
 either lf rf e =
     case e of
-        Right a ->
-            rf a
+        Left a ->
+            lf a
 
-        Left b ->
-            lf b
+        Right b ->
+            rf b
 
 
-isLeft : Either c a -> Bool
+bimap : (a -> c) -> (b -> d) -> Either a b -> Either c d
+bimap lf rf e =
+    case e of
+        Left a ->
+            Left (lf a)
+
+        Right b ->
+            Right (rf b)
+
+
+isLeft : Either a b -> Bool
 isLeft either =
     case either of
         Left a ->
@@ -55,112 +131,113 @@ isLeft either =
             False
 
 
-isRight : Either c a -> Bool
+isRight : Either a b -> Bool
 isRight either =
     case either of
-        Right b ->
-            True
-
         Left a ->
             False
 
+        Right b ->
+            True
 
-rights : List (Either c a) -> List a
+
+rights : List (Either a b) -> List b
 rights eitherList =
     let
         getValues either =
             case either of
-                Right a ->
-                    [ a ]
-
                 Left b ->
                     []
+
+                Right a ->
+                    [ a ]
     in
         List.concatMap getValues eitherList
 
 
-lefts : List (Either c a) -> List c
+lefts : List (Either a b) -> List a
 lefts eitherList =
     let
         getValues either =
             case either of
-                Left b ->
-                    [ b ]
+                Left a ->
+                    [ a ]
 
-                Right a ->
+                Right b ->
                     []
     in
         List.concatMap getValues eitherList
 
 
-fmap : (a -> b) -> Either c a -> Either c b
+fmap : (b -> c) -> Either a b -> Either a c
 fmap f either =
     case either of
-        Right a ->
-            Right (f a)
+        Left a ->
+            Left a
 
-        Left b ->
-            Left b
+        Right b ->
+            Right (f b)
 
 
-chain : (a -> Either c b) -> Either c a -> Either c b
+leftMap : (a -> c) -> Either a b -> Either c b
+leftMap f either =
+    case either of
+        Left a ->
+            Left (f a)
+
+        Right b ->
+            Right b
+
+
+chain : (b -> Either a d) -> Either a b -> Either a d
 chain f either =
     case either of
-        Right a ->
-            f a
+        Left a ->
+            Left a
 
-        Left b ->
-            Left b
+        Right b ->
+            f b
 
 
-ap : Either c (a -> b) -> Either c a -> Either c b
+ap : Either a (b -> c) -> Either a b -> Either a c
 ap f g =
     chain (\fn -> fmap fn g) <| f
 
 
-lift2 : (a -> b -> d) -> Either c a -> Either c b -> Either c d
+lift2 : (b -> c -> d) -> Either a b -> Either a c -> Either a d
 lift2 f e1 e2 =
     ap (fmap f e1) e2
 
 
-concat : Either c (List a) -> Either c (List a) -> Either c (List a)
+concat : Either a (List b) -> Either a (List b) -> Either a (List b)
 concat m1 m2 =
     lift2 (++) m1 m2
 
 
-traverse : (a -> Either c b) -> List a -> Either c (List b)
+traverse : (c -> Either a b) -> List c -> Either a (List b)
 traverse f =
     let
         cons val eitherList =
             case f val of
-                Right x ->
-                    fmap (\xs -> x :: xs) eitherList
+                Left a ->
+                    Left a
 
-                Left b ->
-                    Left b
+                Right b ->
+                    fmap (\xs -> b :: xs) eitherList
     in
         List.foldr cons (Right [])
 
 
-sequence : List (Either c a) -> Either c (List a)
+sequence : List (Either a b) -> Either a (List b)
 sequence =
     traverse identity
 
 
-toBoolean : Either c a -> Bool
+toBoolean : Either a b -> Bool
 toBoolean either =
     case either of
-        Right a ->
-            True
-
-        Left b ->
+        Left a ->
             False
 
-eitherToMaybe : Either c a -> Maybe a
-eitherToMaybe either =
-    case either of
-        Left a ->
-            Nothing
-
         Right b ->
-            Just b
+            True
