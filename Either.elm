@@ -133,7 +133,7 @@ traverse f =
         cons val eitherList =
             case f val of
                 Right x ->
-                    fmap (\y -> x :: y) eitherList
+                    fmap (\xs -> x :: xs) eitherList
 
                 Left b ->
                     Left b
