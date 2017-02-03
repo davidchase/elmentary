@@ -38,10 +38,12 @@
 **traverse** : `(a -> Maybe b) -> List a -> Maybe (List b)`
 
 **sequence** : `List (Maybe a) -> Maybe (List a)`
-<details>
+</details>
 
 ### Either Type
 
+<details>
+<summary> Either API </summary>
 **partition** : `List (Either c a) -> ( List c, List a )`
 
 **either** : `(c -> b) -> (a -> b) -> Either c a -> b`
@@ -71,7 +73,7 @@
 **toBoolean** : `Either c a -> Bool`
 
 **eitherToMaybe** : `Either c a -> Maybe a`
-
+</details>
 
 ### Inspired by
 
