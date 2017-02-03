@@ -38,6 +38,39 @@
 
 **sequence** : `List (Maybe a) -> Maybe (List a)`
 
+### Either Type
+
+**partition** : `List (Either c a) -> ( List c, List a )`
+
+**either** : `(c -> b) -> (a -> b) -> Either c a -> b`
+
+**isLeft** : `Either c a -> Bool`
+
+**isRight** : `Either c a -> Bool`
+
+**rights** : `List (Either c a) -> List a`
+
+**lefts** : `List (Either c a) -> List c`
+
+**fmap** : `(a -> b) -> Either c a -> Either c b`
+
+**chain** : `(a -> Either c b) -> Either c a -> Either c b`
+
+**ap** : `Either c (a -> b) -> Either c a -> Either c b`
+
+**lift2** : `(a -> b -> d) -> Either c a -> Either c b -> Either c d`
+
+**concat** : `Either c (List a) -> Either c (List a) -> Either c (List a)`
+
+**traverse** : `(a -> Either c b) -> List a -> Either c (List b)`
+
+**sequence** : `List (Either c a) -> Either c (List a)`
+
+**toBoolean** : `Either c a -> Bool`
+
+**eitherToMaybe** : `Either c a -> Maybe a`
+
+
 ### Inspired by
 
 [sanctuary](http://sanctuary.js.org)
