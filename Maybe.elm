@@ -1,19 +1,19 @@
 module Elmentary.Maybe exposing
-  ( reduce
-  , fmap
-  , chain
-  , ap
-  , filter
-  , isJust
+  ( ap
   , catMaybes
+  , chain
+  , concat
+  , empty
+  , filter
+  , fmap
+  , isJust
   , join
   , lift2
-  , concat
   , mapMaybe
-  , maybe,
-  , empty
-  , traverse
+  , maybe
+  , reduce
   , sequence
+  , traverse
   )
 
 reduce : (a -> b -> a) -> a -> Maybe b -> a
