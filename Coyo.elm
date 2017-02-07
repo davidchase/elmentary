@@ -9,8 +9,6 @@ module Elmentary.Coyo exposing
   , lowerCoyo
   )
 
-
-import Html exposing (text)
 import List exposing (map, concatMap, append)
 
 
