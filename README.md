@@ -4,6 +4,9 @@
 # elmentary
 > Your one-stop shop for Algebraic Data Types (ADT) in elm 
 
+## Why ?
+Fun to experiment 
+
 ## Types
 
 ### Maybe Type  
