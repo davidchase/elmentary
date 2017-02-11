@@ -1,4 +1,4 @@
-module Elmentary.Coyo exposing
+module Elmentary.Coyoneda exposing
   ( liftCoyoneda
   , fmap
   , chain
