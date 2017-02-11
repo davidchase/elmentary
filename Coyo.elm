@@ -1,66 +1,66 @@
 module Elmentary.Coyo exposing
-  ( liftCoyo
+  ( liftCoyoneda
   , fmap
   , chain
-  , apply
-  , pure
-  , empty
-  , concat
-  , lowerCoyo
+  , ap
+  , lowerCoyoneda
+  , lift2
+  , traverse
+  , sequence
+  , show
   )
-
-import List exposing (map, concatMap, append)
-
-
-type alias Coyo f a =
-    { f : f, a : a }
+  
+import List exposing (map, concatMap, append, foldr)
 
 
-liftCoyo : b -> Coyo (a -> a) b
-liftCoyo =
-    Coyo identity
+type alias Coyoneda f b =
+    { f : f, a : List b }
 
 
-lowerCoyo : Coyo (a -> b) (List a) -> List b
-lowerCoyo coyo =
+liftCoyoneda : List a -> Coyoneda (a -> a) a
+liftCoyoneda =
+    Coyoneda identity
+
+
+lowerCoyoneda : Coyoneda (a -> b) a -> List b
+lowerCoyoneda coyo =
     List.map coyo.f coyo.a
 
 
-chain : (d -> Coyo (a -> c) (List a)) -> Coyo (b -> d) (List b) -> Coyo (a -> a) (List c)
-chain f coyo =
-    liftCoyo <| List.concatMap (lowerCoyo << f << coyo.f) coyo.a
-
-
-fmap : (b -> c) -> Coyo (a -> b) d -> Coyo (a -> c) d
+fmap : (b -> c) -> Coyoneda (a -> b) d -> Coyoneda (a -> c) d
 fmap f coyo =
-    Coyo (f << coyo.f) coyo.a
+    Coyoneda (f << coyo.f) coyo.a
 
 
-ap : List (a -> b) -> List a -> List b
-ap f g =
-    concatMap (\fn -> map fn <| g) <| f
+show : Coyoneda (a -> a) a -> String
+show coyo =
+    "liftCoyoneda " ++ (toString coyo.a)
 
 
-apply : Coyo (a -> b -> c) (List a) -> Coyo (b -> b) (List b) -> Coyo (a -> a) (List c)
-apply m n =
-    liftCoyo <| ap (lowerCoyo m) (lowerCoyo n)
+chain : (b -> Coyoneda (c -> d) c) -> Coyoneda (a -> b) a -> Coyoneda (d -> d) d
+chain f coyo =
+    liftCoyoneda <| concatMap (lowerCoyoneda << f << coyo.f) coyo.a
 
 
-concat : Coyo (a -> c) (List a) -> Coyo (b -> c) (List b) -> Coyo (a -> a) (List c)
-concat u v =
-    liftCoyo <| append (lowerCoyo u) <| lowerCoyo v
+ap : Coyoneda (a -> b -> c) a -> Coyoneda (a -> b) a -> Coyoneda (c -> c) c
+ap f coyo =
+    chain (\fn -> fmap fn coyo) <| f
 
 
-toList : a -> List a
-toList fn =
-    fn :: []
+lift2 : (a -> b -> c) -> Coyoneda (a -> a) a -> Coyoneda (a -> b) a -> Coyoneda (c -> c) c
+lift2 f m m2 =
+    ap (fmap f m) m2
 
 
-empty : Coyo (a -> a) (List b)
-empty =
-    liftCoyo []
+traverse : (a -> Coyoneda (List b -> b) (List b)) -> List a -> Coyoneda (List b -> List b) (List b)
+traverse f =
+    let
+        cons x acc =
+            ap (fmap (::) <| f x) acc
+    in
+        foldr cons (liftCoyoneda [ [] ])
 
 
-pure : b -> Coyo (a -> a) (List b)
-pure =
-    liftCoyo << toList
+sequence : List (Coyoneda (List a -> a) (List a)) -> Coyoneda (List a -> List a) (List a)
+sequence =
+    traverse identity
